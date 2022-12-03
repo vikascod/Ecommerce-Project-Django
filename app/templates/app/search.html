@@ -1,0 +1,17 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Search{% endblock title %}
+{% block main-content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            {% for item in all_item %}
+            <div class="col-md-4 col-sm-12 text-center mb-5">
+                <img src="{{ item.product_image.url }}" alt="" class="rounded" width="350" height="300">
+                <h5 class="mt-3">{{ item.title }}</h5>
+                <p>price : {{ item.price }}</p>
+                <p>{{ item.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock main-content %}

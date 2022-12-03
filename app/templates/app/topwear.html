@@ -1,0 +1,37 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Buy Now{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <a href="{% url 'topwear' %}" class="list-group-item list-group-item-action" aria-current="true">All
+                    Laptop</a>
+                <a href="{% url 'topweardata' 'Gucci' %}" class="list-group-item list-group-item-action"
+                    aria-current="true">Gucci</a>
+                <a href="{% url 'topweardata' 'Prada' %}" class="list-group-item list-group-item-action"
+                    aria-current="true">Prada</a>
+                <a href="{% url 'topweardata' 'below' %}" class="list-group-item list-group-item-action"
+                    aria-current="true">Below 500</a>
+                <a href="{% url 'topweardata' 'above' %}" class="list-group-item list-group-item-action"
+                    aria-current="true">Above 500</a>
+            </div>
+        </div>
+        <div class="col-sm-8 offset-sm-1">
+            <div class="row">
+                {% for top in topwears %}
+                <a href="{% url 'product-detail' top.id %}" class="btn">
+                    <div class="item">
+                        <img src="{{top.product_image.url}}" height="300" class="" alt="">
+                        <div class="fw-bold">{{top.title}}</div>
+                        <div class="fw-bold">Rs. {{top.price}}</div>
+                        <small class="fw-light text-decoration-line-through">{{top.discount_price}}</small>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}
