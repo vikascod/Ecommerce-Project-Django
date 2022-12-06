@@ -49,3 +49,9 @@ class CustomerProfileForm(forms.ModelForm):
             'state':forms.Select(attrs={'class':'form-control'}),
             'zip_code':forms.NumberInput(attrs={'class':'form-control'}),
         }
+
+class CommentForm(forms.ModelForm):
+    body = forms.CharField(label='', widget=forms.TextInput(attrs={'row':'3', 'placeholder':'Say something...'}))
+    class Meta:
+        model = Comment
+        fields = ['body']

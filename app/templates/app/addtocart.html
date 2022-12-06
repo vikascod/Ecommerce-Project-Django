@@ -16,14 +16,14 @@
       <div>
        <h5>{{cart.product.title}}</h5>
        <p class="mb-2 text-muted small">{{cart.product.description}}</p>
-       <div class="my-3">
+       {% comment %} <div class="my-3">
         <label for="quantity">Quantity:</label>
         <a class="minus-cart btn" pid="{{ cart.product.id }}"><i class="fas fa-minus-square fa-lg"></i></a>
           <span id="quantity">{{cart.quantity}}</span>
         <a class="plus-cart btn" pid="{{ cart.product.id }}"><i class="fas fa-plus-square fa-lg"></i></a>
-       </div> 
+       </div>  {% endcomment %}
        <div class="d-flex justify-content-between">
-        <a href="{% url 'remove' cart.id %}" class="btn btn-sm btn-secondary mr-3"  pid="{{ cart.product.id }}">Remove item </a>
+        <a href="{% url 'remove' cart.id %}" class="btn btn-sm btn-secondary mr-3">Remove item </a>
         <p class="mb-0"><span><strong>Rs. {{cart.product.price}}</strong></span></p>
        </div>
       </div>

@@ -1,0 +1,20 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Comment{% endblock title %}
+{% block main-content %}
+<div class="container text-center my-5">
+    <div class="row">
+        <div class="col-md-6 col-sm-5 justify-content-center">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{form}}
+                <input type="submit" class="btn btn-primary my-3" value="Post">
+            </form>
+            {% for comment in comments %}
+            <p><strong>{{ comment.author }}</strong> {{ comment.body }}</p>
+            <p>{{ comment.created_on }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock main-content %}

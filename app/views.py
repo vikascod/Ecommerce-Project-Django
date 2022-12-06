@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from app.models import Product, Cart, Customer, OrderPlaced
+from app.models import Product, Cart, Customer, OrderPlaced, Comment
 from django.views.generic import View
-from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm
+from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
@@ -35,11 +35,17 @@ class ProductDetailView(View):
     def get(self, request, pk):
         total_item = 0
         products = Product.objects.get(pk=pk)
+        in_cart = Cart.objects.filter(product__id=pk).exists()
         if request.user.is_authenticated:
             total_item = len(Cart.objects.filter(user=request.user))
+        context = {
+            'products':products, 
+            'total_item':total_item,
+            'in_cart':in_cart
+        }
         # item_already_in_cart = False
         # item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
-        return render(request, 'app/productdetail.html', {'products':products, 'total_item':total_item})
+        return render(request, 'app/productdetail.html', context)
 
 @login_required
 def add_to_cart(request):
@@ -256,3 +262,27 @@ def remove_item(request, id):
     item = Cart.objects.get(id=id)
     item.delete()
     return redirect('cart')
+
+
+class CommentView(View):
+    def get(self, request, *args, **kwargs):
+        comments = Comment.objects.all().order_by('-created_on') 
+        form = CommentForm()
+        context = {
+            'form':form,
+            'comments':comments
+        }
+        return render(request, 'app/comment.html', context)
+    
+    def post(self, request, *args, **kwargs):
+        comments = Comment.objects.all().order_by('-created_on') 
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.author = request.user
+            new_post.save()
+        context = {
+            'form':form,
+            'comments':comments
+        }
+        return render(request, 'app/comment.html', context)

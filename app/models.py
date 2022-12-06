@@ -72,3 +72,9 @@ class OrderPlaced(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Comment(models.Model):
+    body = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
