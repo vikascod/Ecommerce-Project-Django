@@ -11,8 +11,15 @@
                 <input type="submit" class="btn btn-primary my-3" value="Post">
             </form>
             {% for comment in comments %}
-            <p><strong>{{ comment.author }}</strong> {{ comment.body }}</p>
-            <p>{{ comment.created_on }}</p>
+            <div class="card mt-4">
+                <div class="card-header">
+                 <strong>{{ comment.author }}</strong> - <small>{{ comment.created_on }}</small>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ comment.body }}</p>
+                </div>
+              </div>
+
             {% endfor %}
         </div>
     </div>

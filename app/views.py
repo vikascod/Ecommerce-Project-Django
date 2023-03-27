@@ -286,3 +286,7 @@ class CommentView(View):
             'comments':comments
         }
         return render(request, 'app/comment.html', context)
+
+
+def about(request):
+    return render(request, 'app/about.html')

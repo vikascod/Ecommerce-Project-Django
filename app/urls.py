@@ -64,4 +64,5 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('remove/<int:id>/', views.remove_item, name='remove'),
     path('comment/', views.CommentView.as_view(), name='comment'),
+    path('about/', views.about, name='about'),
 ]
