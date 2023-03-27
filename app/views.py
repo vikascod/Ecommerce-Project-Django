@@ -5,7 +5,7 @@ from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
@@ -47,7 +47,8 @@ class ProductDetailView(View):
         # item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
         return render(request, 'app/productdetail.html', context)
 
-@login_required
+
+@login_required(login_url='/accounts/login')
 def add_to_cart(request):
     user = request.user
     product_id = request.GET.get('prod_id')
@@ -57,7 +58,7 @@ def add_to_cart(request):
     return redirect('cart')
 
 
-@login_required
+@login_required(login_url='/accounts/login')
 def show_cart(request):
     if request.user.is_authenticated:
         total_item = 0
@@ -82,16 +83,17 @@ def show_cart(request):
 
 
 
-@login_required
+@login_required(login_url='/accounts/login')
 def buy_now(request):
     return render(request, 'app/buynow.html')
 
 
-@method_decorator(login_required, name="dispatch")
+@method_decorator(login_required(login_url='/accounts/login'), name="dispatch")
 class ProfileView(View):
     def get(self, request):
         form = CustomerProfileForm()
         return render(request, 'app/profile.html', {'form':form, 'active':'btn-primary'})
+
 
     def post(self, request):
         form = CustomerProfileForm(request.POST)
@@ -110,13 +112,13 @@ class ProfileView(View):
         return render(request, 'app/profile.html', {'form':form})
 
 
-
+@login_required(login_url='/accounts/login')
 def address(request):
     add = Customer.objects.filter(user=request.user)
     return render(request, 'app/address.html', {'add':add, 'active':'btn-primary'})
 
 
-@login_required()
+@login_required(login_url='/accounts/login')
 def orders(request):
     orderplaced = OrderPlaced.objects.filter(user=request.user)
     return render(request, 'app/orders.html', {'orderplaced':orderplaced})
@@ -212,7 +214,7 @@ class CustomerRegistrationView(View):
         return render(request, 'app/customerregistration.html', {'form':form})
 
 
-@login_required
+@login_required(login_url='/accounts/login')
 def checkout(request):
     user = request.user
     add = Customer.objects.filter(user=user)
@@ -228,7 +230,7 @@ def checkout(request):
         return render(request, 'app/checkout.html', {'add':add, 'items':items, 'totalamount':totalamount})
     return render(request, 'app/checkout.html')
 
-@login_required()
+@login_required(login_url='/accounts/login')
 def payment_done(request):
     user = request.user
     customer_id = request.GET.get('custid')
@@ -257,11 +259,12 @@ def search(request):
 
 
 
-@login_required()
+@login_required(login_url='/accounts/login')
 def remove_item(request, id):
     item = Cart.objects.get(id=id)
     item.delete()
     return redirect('cart')
+
 
 
 class CommentView(View):
@@ -273,19 +276,23 @@ class CommentView(View):
             'comments':comments
         }
         return render(request, 'app/comment.html', context)
-    
+
+
     def post(self, request, *args, **kwargs):
-        comments = Comment.objects.all().order_by('-created_on') 
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            new_post = form.save(commit=False)
-            new_post.author = request.user
-            new_post.save()
-        context = {
-            'form':form,
-            'comments':comments
-        }
-        return render(request, 'app/comment.html', context)
+        if request.user.is_authenticated:
+            comments = Comment.objects.all().order_by('-created_on') 
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                new_post = form.save(commit=False)
+                new_post.author = request.user
+                new_post.save()
+            context = {
+                'form':form,
+                'comments':comments
+            }
+            return render(request, 'app/comment.html', context)
+        else:
+            return redirect('login')
 
 
 def about(request):
