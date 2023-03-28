@@ -126,6 +126,19 @@ def show_cart(request):
             return render(request, 'app/emptycart.html')
 
 
+@login_required(login_url='/accounts/login')
+def update_cart(request, cart_id):
+    cart = Cart.objects.get(id=cart_id)
+    if request.method == 'POST':
+        if request.POST.get('update') == '-1':
+            cart.quantity -= 1
+            cart.save()
+        elif request.POST.get('update') == '1':
+            cart.quantity += 1
+            cart.save()
+    return redirect('cart')
+
+
 
 @login_required(login_url='/accounts/login')
 def buy_now(request):
