@@ -6,6 +6,28 @@ from django.contrib.auth import password_validation
 from app.models import *
 
 
+CATEGORY_CHOICES = (
+    ('M', 'Mobile'),
+    ('L', 'Laptop'),
+    ('TW', 'Top Wear'),
+    ('BW', 'Bottom Wear'),
+)
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['title', 'price', 'discount_price', 'description', 'brand', 'category', 'product_image']
+        widgets = {
+            'title':forms.TextInput(attrs={'class':'form-control'}),
+            'price':forms.NumberInput(attrs={'class':'form-control'}),
+            'discount_price':forms.NumberInput(attrs={'class':'form-control'}),
+            'description':forms.TextInput(attrs={'class':'form-control'}),
+            'brand':forms.TextInput(attrs={'class':'form-control'}),
+            'category':forms.Select(choices=CATEGORY_CHOICES, attrs={'class':'form-control'}),
+            'product_image':forms.FileInput(attrs={'class':'form-control'}),
+        }
+
+
 class CustomerRegistrationForm(UserCreationForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))

@@ -34,6 +34,7 @@ CATEGORY_CHOICES = (
 
 
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=100)
     price = models.FloatField()
     discount_price = models.FloatField()

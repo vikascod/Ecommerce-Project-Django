@@ -45,7 +45,7 @@ urlpatterns = [
 
 
     #set rate rate limiter
-    path('accounts/login/', ratelimit(key='post:username', rate='5/m')(auth_view.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm)), name='login'),
+    path('accounts/login/', ratelimit(key='post:username', rate='5/m')(auth_view.LoginView.as_view(template_name='app/login.html', success_url='home', authentication_form=LoginForm)), name='login'),
 
     path('logout/', ratelimit(key='get:username', rate='5/m')(auth_view.LogoutView.as_view(next_page='login')), name='logout'),
 
@@ -67,4 +67,5 @@ urlpatterns = [
     path('remove/<int:id>/', views.remove_item, name='remove'),
     path('comment/', views.CommentView.as_view(), name='comment'),
     path('about/', views.about, name='about'),
+    path('add-product/', ProductAddView.as_view(), name='add_product'),
 ]

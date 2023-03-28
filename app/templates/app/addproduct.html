@@ -1,0 +1,14 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Add Product{% endblock title %}
+
+{% block main-content %}
+    <div class="container">
+        <h1 class="text-center">Add Product</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="btn btn-secondary mt-2" value="Submit">
+        </form>
+    </div>
+{% endblock main-content %}

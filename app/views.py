@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from app.models import Product, Cart, Customer, OrderPlaced, Comment
 from django.views.generic import View
-from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm
+from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm, ProductForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
@@ -14,9 +14,45 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django_ratelimit.decorators import ratelimit
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
+
+
+
+class ProductAddView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            total_item = 0
+            form = ProductForm()
+            if request.user.is_authenticated:
+                total_item = len(Cart.objects.filter(user=request.user))
+            context = {
+                'form':form,
+                'total_item':total_item
+            }
+            return render(request, 'app/addproduct.html', context)
+        else:
+            return HttpResponse("No Permission!")
+
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = ProductForm(request.POST, request.FILES)
+            if form.is_valid():
+                user = request.user
+                new_product = form.save(commit=False)
+                new_product.save()
+                messages.success(request, "Product Successfully Added!")
+                return redirect('home')
+            
+            context = {
+                'form':form,
+                }
+            return render(request, 'app/addproduct.html', context)
+        else:
+            return HttpResponse("No Permission!")
 
 
 
