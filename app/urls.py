@@ -3,7 +3,7 @@ from app import views
 from app.views import *
 from django.contrib.auth import views as auth_view
 from app.forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPasswordForm
-
+from django_ratelimit.decorators import ratelimit
 
 
 urlpatterns = [
@@ -42,22 +42,22 @@ urlpatterns = [
     path('bottomwear/<slug:data>/', views.BottomwearView.as_view(), name='bottomweardata'),
 
 
+    #set rate rate limiter
+    path('accounts/login/', ratelimit(key='post:username', rate='5/m')(auth_view.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm)), name='login'),
 
-    path('accounts/login/', auth_view.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm), name='login'),
+    path('logout/', ratelimit(key='get:username', rate='5/m')(auth_view.LogoutView.as_view(next_page='login')), name='logout'),
 
-    path('logout/', auth_view.LogoutView.as_view(next_page='login'), name='logout'),
+    path('passwordchange/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeView.as_view(template_name='app/passwordchange.html', form_class=MyPasswordChangeForm, success_url='/passwordchangedone/')), name='passwordchange'),
 
-    path('passwordchange/', auth_view.PasswordChangeView.as_view(template_name='app/passwordchange.html', form_class=MyPasswordChangeForm, success_url='/passwordchangedone/'), name='passwordchange'),
+    path('passwordchangedone/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeDoneView.as_view(template_name='app/passwordchangedone.html')), name='passwordchangedone'),
 
-    path('passwordchangedone/', auth_view.PasswordChangeDoneView.as_view(template_name='app/passwordchangedone.html'), name='passwordchangedone'),
+    path('password-reset/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordResetView.as_view(template_name='app/password_reset.html', form_class=MyPasswordResetForm)), name='password_reset'),
 
-    path('password-reset/', auth_view.PasswordResetView.as_view(template_name='app/password_reset.html', form_class=MyPasswordResetForm), name='password_reset'),
+    path('password-reset/done/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeDoneView.as_view(template_name='app/password_reset_done.html')), name='password_reset_done'),
 
-    path('password-reset/done/', auth_view.PasswordChangeDoneView.as_view(template_name='app/password_reset_done.html'), name='password_reset_done'),
+    path('password-reset-complete/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordResetCompleteView.as_view(template_name='app/password_reset_complete.html')), name='password_reset_complete'),
 
-    path('password-reset-complete/', auth_view.PasswordResetCompleteView.as_view(template_name='app/password_reset_complete.html'), name='password_reset_complete'),
-
-    path('password-reset-confirm/<uidb64>/<token>/', auth_view.PasswordResetConfirmView.as_view(template_name='app/password_reset_confirm.html', form_class=MySetPasswordForm), name='password_reset_confirm'),
+    path('password-reset-confirm/<uidb64>/<token>/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordResetConfirmView.as_view(template_name='app/password_reset_confirm.html', form_class=MySetPasswordForm)), name='password_reset_confirm'),
 
     path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration'),
 

@@ -82,6 +82,34 @@ DATABASES = {
 }
 
 
+"""
+DATABASE = {
+    "default":{
+        "ENGINE" : "django.db.backends.postgresql",
+        "NAME" : "railway",
+        "USER" : "postgres",
+        "PASSWORD" : "Postgresql",
+        "HOST" : "railway.app",
+        "PORT" : "5432",
+    }
+}
+"""
+
+
+CACHE_TTL = 60
+
+CACHES = {
+    "default":{
+        "BACKEND":"django_redis.cache.RedisCache",
+        "LOCATION":"redis://127.0.0.1:6379/1",
+        "OPTIONAL":{
+            "CLIENT_CLASS":"django_redis.cache.DefaultClient"
+        },
+        "KEY_PREFIX":"exaple"
+    }
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 

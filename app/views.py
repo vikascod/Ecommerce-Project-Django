@@ -9,17 +9,60 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from django_ratelimit.decorators import ratelimit
+
+
+CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
+
 
 
 class ProductView(View):
+    @method_decorator(cache_page(CACHE_TTL))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         total_item = 0
-        bottomwears = Product.objects.filter(category='BW')
-        topwears = Product.objects.filter(category='TW')
-        mobiles = Product.objects.filter(category='M')
-        laptops = Product.objects.filter(category='L')
+
+        bottomwears = cache.get('all_bottomwears')
+        if bottomwears is None:
+            bottomwears = Product.objects.filter(category='BW')
+            cache.set('all_bottomwears', bottomwears, CACHE_TTL)
+            print(print("Hit bottomwears db"))
+        else:
+            print("Hit bottomwears cache")
+
+        topwears = cache.get('all_topwears')
+        if topwears is None:
+            topwears = Product.objects.filter(category='TW')
+            cache.set('all_topwears', topwears, CACHE_TTL)
+            print("Hit topwears db")
+        else:
+            print("Hit topwears cache")
+
+        mobiles = cache.get('all_mobiles')
+        if mobiles is None:
+            mobiles = Product.objects.filter(category='M')
+            cache.set('all_mobiles', mobiles, CACHE_TTL)
+            print("Hit mobiles db")
+        else:
+            print("Hit mobiles cache")
+
+        laptops = cache.get('all_laptops')
+        if laptops is None:
+            laptops = Product.objects.filter(category='L')
+            cache.set('all_laptops', laptops, CACHE_TTL)
+            print("Hit laptops db") 
+        else:
+            print("Hit laptops cache")
+
         if request.user.is_authenticated:
-            total_item = len(Cart.objects.filter(user=request.user))
+            total_item = Cart.objects.filter(user=request.user).count()
+
         context = {
             'bottomwears':bottomwears,
             'topwears':topwears,
@@ -29,6 +72,7 @@ class ProductView(View):
         }
 
         return render(request, 'app/home.html', context)
+
 
 
 class ProductDetailView(View):
@@ -125,6 +169,7 @@ def orders(request):
 
 
 class MobileView(View):
+    @method_decorator(cache_page(CACHE_TTL))
     def get(self, request, data=None):
         if data == None:
             mobiles = Product.objects.filter(category='M')
@@ -141,6 +186,7 @@ class MobileView(View):
 
 
 class LaptopView(View):
+    @method_decorator(cache_page(CACHE_TTL))
     def get(self, request, data=None):
         if data == None:
             laptops = Product.objects.filter(category='L')
@@ -159,6 +205,7 @@ class LaptopView(View):
 
 
 class TopwearView(View):
+    @method_decorator(cache_page(CACHE_TTL))
     def get(self, request, data=None):
         if data == None:
             topwears = Product.objects.filter(category='TW')
@@ -178,6 +225,7 @@ class TopwearView(View):
 
 
 class BottomwearView(View):
+    @method_decorator(cache_page(CACHE_TTL))
     def get(self, request, data=None):
         if data == None:
             bottomwears = Product.objects.filter(category='BW')
@@ -200,10 +248,12 @@ class BottomwearView(View):
 
 
 class CustomerRegistrationView(View):
+    @method_decorator(ratelimit(key='get:q', rate='5/m'))
     def get(self, request):
         form = CustomerRegistrationForm()
         return render(request, 'app/customerregistration.html', {'form':form})
 
+    @method_decorator(ratelimit(key='post:q', rate='5/m'))
     def post(self, request):
         form = CustomerRegistrationForm(request.POST)
         if form.is_valid():
@@ -230,6 +280,8 @@ def checkout(request):
         return render(request, 'app/checkout.html', {'add':add, 'items':items, 'totalamount':totalamount})
     return render(request, 'app/checkout.html')
 
+
+
 @login_required(login_url='/accounts/login')
 def payment_done(request):
     user = request.user
@@ -243,7 +295,8 @@ def payment_done(request):
         return redirect('orders')
 
 
-
+@ratelimit(key='get:q', rate='5/m')
+@ratelimit(key='post:q', rate='5/m')
 def search(request):
     search_query = request.GET.get('query')
     all_item = Product.objects.filter(
@@ -269,11 +322,15 @@ def remove_item(request, id):
 
 class CommentView(View):
     def get(self, request, *args, **kwargs):
+        total_item = 0
         comments = Comment.objects.all().order_by('-created_on') 
         form = CommentForm()
+        if request.user.is_authenticated:
+            total_item = len(Cart.objects.filter(user=request.user))
         context = {
             'form':form,
-            'comments':comments
+            'comments':comments,
+            'total_item':total_item
         }
         return render(request, 'app/comment.html', context)
 
@@ -296,4 +353,10 @@ class CommentView(View):
 
 
 def about(request):
-    return render(request, 'app/about.html')
+    total_item = 0
+    if request.user.is_authenticated:
+        total_item = len(Cart.objects.filter(user=request.user))
+    context = {
+        'total_item':total_item
+    }
+    return render(request, 'app/about.html', context)
