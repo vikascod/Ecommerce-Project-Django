@@ -55,14 +55,19 @@ class ProductAddView(View):
         else:
             return HttpResponse("No Permission!")
 
-
+@login_required(login_url='login')
 def deleteProduct(request, pk):
-    product = Product.objects.get(pk=pk)
-    if not product:
-        return HttpResponse(f"No product avilable with id {pk}")
-    product.delete()
-    messages.success(request, "Successfully product deleted!")
-    return redirect('home')
+    if request.user.is_staff:
+        product = Product.objects.get(pk=pk)
+        if not product:
+            return HttpResponse(f"No product avilable with id {pk}")
+        product.delete()
+        messages.success(request, "Successfully product deleted!")
+        return redirect('home')
+    else:
+        return HttpResponse("You don't have permission!")
+
+        
 
 @login_required(login_url='login')
 def updateProduct(request, pk):
