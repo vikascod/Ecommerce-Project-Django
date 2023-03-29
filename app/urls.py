@@ -68,4 +68,6 @@ urlpatterns = [
     path('comment/', views.CommentView.as_view(), name='comment'),
     path('about/', views.about, name='about'),
     path('add-product/', ProductAddView.as_view(), name='add_product'),
+    path('update-product/<int:pk>/', updateProduct, name='update_product'),
+    path('delete-product/<int:pk>/', deleteProduct, name='delete_product'),
 ]

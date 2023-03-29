@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from app.models import Product, Cart, Customer, OrderPlaced, Comment
 from django.views.generic import View
-from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm, ProductForm
+from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm, ProductForm, UpdateProductForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
@@ -43,6 +43,7 @@ class ProductAddView(View):
             if form.is_valid():
                 user = request.user
                 new_product = form.save(commit=False)
+                new_product.user = user
                 new_product.save()
                 messages.success(request, "Product Successfully Added!")
                 return redirect('home')
@@ -53,6 +54,32 @@ class ProductAddView(View):
             return render(request, 'app/addproduct.html', context)
         else:
             return HttpResponse("No Permission!")
+
+
+def deleteProduct(request, pk):
+    product = Product.objects.get(pk=pk)
+    if not product:
+        return HttpResponse(f"No product avilable with id {pk}")
+    product.delete()
+    messages.success(request, "Successfully product deleted!")
+    return redirect('home')
+
+@login_required(login_url='login')
+def updateProduct(request, pk):
+    if request.user.is_staff:
+        product = Product.objects.get(pk=pk)
+        form = UpdateProductForm(instance=product)
+        if request.method == 'POST':
+            form = UpdateProductForm(request.POST, request.FILES, instance=product)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Product Successfully Updated!")
+                return redirect('home')
+        context = {'form':form}
+        return render(request, 'app/updateproduct.html', context)
+    else:
+        return HttpResponse("You don't have permission!")
+
 
 
 
@@ -126,6 +153,7 @@ class ProductDetailView(View):
         # item_already_in_cart = False
         # item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
         return render(request, 'app/productdetail.html', context)
+
 
 
 @login_required(login_url='/accounts/login')

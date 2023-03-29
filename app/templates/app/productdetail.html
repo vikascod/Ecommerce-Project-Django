@@ -3,6 +3,12 @@
 {% block title %}Product Detail{% endblock title %}
 {% block main-content %}
 <div class="container my-5">
+    {% if request.user.is_staff or request.user.is_superuser %}
+        {% if request.user == products.user %}
+            <li><a class="btn btn-primary shadow px-5 py-2" href="{% url 'update_product' products.pk %}">Update Product</a></li> <br>
+            <li><a class="btn btn-danger shadow px-5 py-2" href="{% url 'delete_product' products.pk %}">Delete Product</a></li>
+        {% endif %}
+    {% endif %}
  <div class="row">
   <div class="col-sm-6 text-center align-self-center">
    <img src="{{ products.product_image.url }}" alt="" class="img-fluid img-thumbnail">
