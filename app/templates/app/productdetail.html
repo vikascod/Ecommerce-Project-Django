@@ -29,7 +29,7 @@
             </form>
         {% endif %}
     {% else %}
-        <button class="btnabc btnabc-warning"><a href="{% url 'login' %}">Add to Cart</a></button>
+        <a href="{% url 'login' %}" class="btn btn-warning">Add to Cart</a>
     {% endif %}
     
     <form action="/add-to-cart" class="d-inline mx-5">

@@ -55,19 +55,24 @@ class ProductAddView(View):
         else:
             return HttpResponse("No Permission!")
 
+
+
 @login_required(login_url='login')
 def deleteProduct(request, pk):
     if request.user.is_staff:
         product = Product.objects.get(pk=pk)
-        if not product:
-            return HttpResponse(f"No product avilable with id {pk}")
-        product.delete()
+        if cache.get(pk) == product:
+            product.delete()
+        else:
+            cache.delete(pk)
+            product.delete()
         messages.success(request, "Successfully product deleted!")
         return redirect('home')
     else:
         return HttpResponse("You don't have permission!")
 
-        
+
+
 
 @login_required(login_url='login')
 def updateProduct(request, pk):
@@ -146,7 +151,10 @@ class ProductView(View):
 class ProductDetailView(View):
     def get(self, request, pk):
         total_item = 0
-        products = Product.objects.get(pk=pk)
+        try:
+            products = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return HttpResponse("Product not found")
         in_cart = Cart.objects.filter(product__id=pk).exists()
         if request.user.is_authenticated:
             total_item = len(Cart.objects.filter(user=request.user))
@@ -155,8 +163,6 @@ class ProductDetailView(View):
             'total_item':total_item,
             'in_cart':in_cart
         }
-        # item_already_in_cart = False
-        # item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
         return render(request, 'app/productdetail.html', context)
 
 
