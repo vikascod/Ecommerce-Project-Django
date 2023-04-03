@@ -8,8 +8,12 @@ services:
     ports:
       - "8000:8000"
 
+    depends_on:
+      - redis
   redis:
-    image: "redis:alpine"
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
 
   web:
     build: .
