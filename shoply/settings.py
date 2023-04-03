@@ -28,7 +28,7 @@ SECRET_KEY = get_random_string(50, chars)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["64.227.144.122"]
 
 
 # Application definition
