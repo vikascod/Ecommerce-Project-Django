@@ -77,26 +77,26 @@ WSGI_APPLICATION = 'shoply.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ecommerce',
+        'USER': 'vik',
+        'PASSWORD': 'Mohangarden',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
-
-"""
-DATABASE = {
-    "default":{
-        "ENGINE" : "django.db.backends.postgresql",
-        "NAME" : "railway",
-        "USER" : "postgres",
-        "PASSWORD" : "jh9udfy96ueg9q74",
-        "HOST" : "railway.app",
-        "PORT" : "5432",
-    }
-}
-"""
 
 
 CACHE_TTL = 60
