@@ -90,8 +90,8 @@ WSGI_APPLICATION = 'shoply.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ecommerce',
-        'USER': 'vik',
+        'NAME': 'ecommerce1',
+        'USER': 'vikk',
         'PASSWORD': 'Mohangarden',
         'HOST': 'localhost',
         'PORT': '',
