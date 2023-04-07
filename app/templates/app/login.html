@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load socialaccount %}
 {% block title %}Login{% endblock title %}
 {% block main-content %}
 <div class="container">
@@ -20,6 +21,12 @@
     <div class="text-center text-primary fw-bold"><small>New to Bloommerce ? <a href="{% url 'customerregistration' %}"
        class="text-danger">Create an Account</a> </small></div>
    </form>
+   <div class="text-center mt-3">
+    <a href="{% provider_login_url 'github' %}" class="btn btn-success">Login via GitHub</a>
+   </div>
+   <div class="text-center mt-3">
+    <a href="{% provider_login_url 'google' %}" class="btn btn-success">Login via Google</a>
+   </div>
   </div>
  </div>
 </div>

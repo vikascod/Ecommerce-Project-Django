@@ -31,6 +31,17 @@ DEBUG = True
 ALLOWED_HOSTS = ["64.227.144.122", "*"]
 
 
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,8 +51,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'app',
     'captcha',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +150,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': '5cea40b07ad25fec660e',
+            'secret': '6536236ad4e567add25bffcd2ab511924c2b0fd7',
+            'key': ''
+        }
+    },
+    'google': {
+        'APP': {
+            'client_id': '958407627570-ue1fcpnjmac4delr2dlltqn30gfu3uc4.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email'
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -155,6 +197,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load socialaccount %}
 {% block title %}Customer Registration{% endblock title %}
 {% block main-content %}
 <div class="container">
@@ -32,6 +33,12 @@
     {% endif %}
    </form>
   </div>
+  <div class="text-center mt-3">
+    <a href="{% provider_login_url 'github' %}" class="btn btn-success">Login via GitHub</a>
+   </div>
+   <div class="text-center mt-3">
+    <a href="{% provider_login_url 'google' %}" class="btn btn-success">Login via Google</a>
+   </div>
  </div>
 </div>
 {% endblock main-content %}
