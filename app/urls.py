@@ -53,7 +53,7 @@ urlpatterns = [
 
     path('passwordchangedone/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeDoneView.as_view(template_name='app/passwordchangedone.html')), name='passwordchangedone'),
 
-    path('password-reset/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordResetView.as_view(template_name='app/password_reset.html', form_class=MyPasswordResetForm)), name='password_reset'),
+    path('password-reset/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordResetView.as_view(template_name='app/password_reset.html', email_template_name='app/password_reset_email.html', form_class=MyPasswordResetForm)), name='password_reset'),
 
     path('password-reset/done/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeDoneView.as_view(template_name='app/password_reset_done.html')), name='password_reset_done'),
 

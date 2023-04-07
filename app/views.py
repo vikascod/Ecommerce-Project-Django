@@ -15,6 +15,7 @@ from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django_ratelimit.decorators import ratelimit
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
 
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
@@ -338,6 +339,8 @@ class BottomwearView(View):
 class CustomerRegistrationView(View):
     @method_decorator(ratelimit(key='get:q', rate='5/m'))
     def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponse("You're already logged in!")
         form = CustomerRegistrationForm()
         return render(request, 'app/customerregistration.html', {'form':form})
 
@@ -350,6 +353,7 @@ class CustomerRegistrationView(View):
             messages.success(request, 'Successfuly registered!')
             return redirect('login')
         return render(request, 'app/customerregistration.html', {'form':form})
+
 
 
 @login_required(login_url='/accounts/login')

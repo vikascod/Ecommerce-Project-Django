@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth import password_validation
 from app.models import *
+from captcha.fields import CaptchaField
 
 
 CATEGORY_CHOICES = (
@@ -47,7 +48,7 @@ class CustomerRegistrationForm(UserCreationForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
     email = forms.CharField(required=True, widget=forms.EmailInput(attrs={'class':'form-control'}))
-
+    captcha = CaptchaField()
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
@@ -58,7 +59,7 @@ class CustomerRegistrationForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = UsernameField(label='Username', widget=forms.TextInput(attrs={'autofocus':True, 'class':'form-control'}))
     password = forms.CharField(label=_('Password'), strip=False, widget=forms.PasswordInput(attrs={'autocomplete':'current-password', 'class':'form-control'}))
-
+    captcha = CaptchaField()
 
 class MyPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(label=_('Old Password'), strip=False, widget=forms.PasswordInput(attrs={'autocomplete':'current-password', 'autofocus':True, 'class':'form-control'}))
@@ -68,6 +69,12 @@ class MyPasswordChangeForm(PasswordChangeForm):
 
 class MyPasswordResetForm(PasswordResetForm):
     email = forms.CharField(label=_("Email"), widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control'}))
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError(_("There is no user registered with the specified email address."))
+        return email
 
 
 class MySetPasswordForm(SetPasswordForm):
