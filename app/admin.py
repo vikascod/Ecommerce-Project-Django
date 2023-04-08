@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Cart, Customer, Product, OrderPlaced
+from app.models import Cart, Customer, Product, OrderPlaced, FreqenltyAskQuestion
 from django.utils.html import format_html
 from django.urls import reverse
 
@@ -29,3 +29,5 @@ class OrderPlacedAdmin(admin.ModelAdmin):
     def product_info(self, obj):
         link = reverse("admin:app_product_change", args=[obj.product.pk])
         return format_html('<a href="{}">{}</a>', link, obj.product.title)
+
+admin.site.register(FreqenltyAskQuestion)

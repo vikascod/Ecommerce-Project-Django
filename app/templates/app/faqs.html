@@ -1,0 +1,34 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}About{% endblock title %}
+{% block main-content %}
+
+<div class="container text-center mt-4">
+
+    <div class="container">
+      {% for i in all_faqs %}
+        <div class="card mt-2">
+          <div class="card-body">
+            <strong>Q.{{ forloop.counter }}</strong> {{ i.question }} <br>
+            <p><strong>Answer</strong> {{ i.answer }}</p>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card-body mt-5">
+      <h3 class="card-title" style="background-color: darkgrey;">FAQs</h3>
+      <p class="card-text">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="question" class="form-label">Ask Question/Query</label>
+                <textarea class="form-control" id="question" name="question" rows="3"></textarea>
+              </div>
+              <input type="submit" class="btn btn-primary btn-sm" value="Ask">
+        </form>
+      </p>
+  </div>
+</div>
+{% endblock %}

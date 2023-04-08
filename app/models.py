@@ -79,3 +79,14 @@ class Comment(models.Model):
     body = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
+
+
+
+class FreqenltyAskQuestion(models.Model):
+    question = models.CharField(max_length=200)
+    answer = models.TextField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return self.question[:30]

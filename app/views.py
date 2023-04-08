@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from app.models import Product, Cart, Customer, OrderPlaced, Comment
+from app.models import Product, Cart, Customer, OrderPlaced, Comment, FreqenltyAskQuestion
 from django.views.generic import View
 from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm, ProductForm, UpdateProductForm
 from django.contrib import messages
@@ -452,3 +452,16 @@ def about(request):
         'total_item':total_item
     }
     return render(request, 'app/about.html', context)
+
+
+
+def frequenty_ask_question(request):
+    if request.method == "POST":
+        question = request.POST.get('question')
+        new_question = FreqenltyAskQuestion.objects.create(question=question)
+        new_question.save()
+        messages.success(request, "Question added")
+        return redirect('faqs')
+    all_faqs = FreqenltyAskQuestion.objects.all()
+    context = {'all_faqs':all_faqs}
+    return render(request, 'app/faqs.html', context)
