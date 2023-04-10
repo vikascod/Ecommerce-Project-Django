@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 # Create your models here.
 STATE_CHOICES = (
@@ -45,6 +46,10 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.id)
+    
+    def update_rating(self):
+        self.rating = self.rating_set.aggregate(Avg('rating'))['rating__avg']
+        self.save()
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -90,3 +95,19 @@ class FreqenltyAskQuestion(models.Model):
 
     def __str__(self):
         return self.question[:30]
+
+
+class Rating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+
+
+    # def update_rating(self):
+    #     product = self.product
+    #     product.rating = Rating.objects.filter(product=product).aggregate(Avg('rating'))['rating__avg']
+    #     product.save()
+        
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     self.update_rating()

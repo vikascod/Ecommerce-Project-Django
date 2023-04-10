@@ -4,27 +4,32 @@
 {% block main-content %}
 <div class="container my-5">
     {% if request.user.is_staff or request.user.is_superuser %}
-        {% if request.user == products.user %}
-            <li><a class="btn btn-primary shadow px-5 py-2" href="{% url 'update_product' products.pk %}">Update Product</a></li> <br>
-            <li><a class="btn btn-danger shadow px-5 py-2" href="{% url 'delete_product' products.pk %}">Delete Product</a></li>
+        {% if request.user == product.user %}
+            <li><a class="btn btn-primary shadow px-5 py-2" href="{% url 'update_product' product.pk %}">Update Product</a></li> <br>
+            <li><a class="btn btn-danger shadow px-5 py-2" href="{% url 'delete_product' product.pk %}">Delete Product</a></li>
         {% endif %}
     {% endif %}
  <div class="row">
   <div class="col-sm-6 text-center align-self-center">
-   <img src="{{ products.product_image.url }}" alt="" class="img-fluid img-thumbnail">
+   <img src="{{ product.product_image.url }}" alt="" class="img-fluid img-thumbnail">
   </div>
   <div class="col-sm-5 offset-sm-1">
-   <h2>{{ products.title }}</h2>
+   <h2>{{ product.title }}</h2>
+   <h6>   {% if rating_avg %}
+    <p>Rating: {{ rating_avg }} <a href="{% url 'rate-products' product.pk %}" class="btn btn-secondary mx-4">Rate</a> </p>
+    {% else %}
+    <p>Rating: 0 <a href="{% url 'rate-products' product.pk %}" class="btn btn-secondary mx-4">Rate</a></p>
+    {% endif %}</h6>
    <hr>
-   <p>{{ products.description }}</p> <br>
-   <h4>Rs. {{products.price}} <small class="fw-light text-decoration-line-through">{{products.discount_price}}</small></h4> <br>
+   <p>{{ product.description }}</p> <br>
+   <h4>Rs. {{product.price}} <small class="fw-light text-decoration-line-through">{{product.discount_price}}</small></h4> <br>
 
    {% if request.user.is_authenticated %}
-        {% if products.id in request.user.cart.all %}
-            <a href="{% url 'cart' %}" class="btn btn-primary shadow px-5 py-2">{{ products.title }} in Cart</a>
+        {% if product.id in request.user.cart.all %}
+            <a href="{% url 'cart' %}" class="btn btn-primary shadow px-5 py-2">{{ product.title }} in Cart</a>
         {% else %}
             <form action="/add-to-cart" class="d-inline">
-            <input type="hidden" name="prod_id" value="{{ products.id }}">
+            <input type="hidden" name="prod_id" value="{{ product.id }}">
             <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
             </form>
         {% endif %}
@@ -33,7 +38,7 @@
     {% endif %}
     
     <form action="/add-to-cart" class="d-inline mx-5">
-        <input type="hidden" name="prod_id" id="prod_id" value="{{products.id}}">
+        <input type="hidden" name="prod_id" id="prod_id" value="{{product.id}}">
         <button type="submit" class="btn btn-success shadow px-5 py-2">Buy Now</button>
     </form>
 
@@ -49,3 +54,4 @@
  </div>
 </div>
 {% endblock main-content %}
+

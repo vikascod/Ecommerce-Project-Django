@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from app.models import Product, Cart, Customer, OrderPlaced, Comment, FreqenltyAskQuestion
+from app.models import Product, Cart, Customer, OrderPlaced, Comment, FreqenltyAskQuestion, Rating
 from django.views.generic import View
 from app.forms import CustomerRegistrationForm, LoginForm, CustomerProfileForm, CommentForm, ProductForm, UpdateProductForm
 from django.contrib import messages
@@ -16,6 +16,7 @@ from django.core.cache import cache
 from django_ratelimit.decorators import ratelimit
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
+from django.db.models import Avg
 
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
@@ -153,18 +154,22 @@ class ProductDetailView(View):
     def get(self, request, pk):
         total_item = 0
         try:
-            products = Product.objects.get(pk=pk)
+            product = Product.objects.get(pk=pk)
+            ratings = Rating.objects.filter(product=product)
+            rating_avg = ratings.aggregate(Avg('rating')).get('rating__avg', 0.0)
         except Product.DoesNotExist:
             return HttpResponse("Product not found")
         in_cart = Cart.objects.filter(product__id=pk).exists()
         if request.user.is_authenticated:
             total_item = len(Cart.objects.filter(user=request.user))
         context = {
-            'products':products, 
-            'total_item':total_item,
-            'in_cart':in_cart
+            'product': product, 
+            'total_item': total_item,
+            'in_cart': in_cart,
+            'rating_avg': rating_avg
         }
         return render(request, 'app/productdetail.html', context)
+
 
 
 
@@ -465,3 +470,31 @@ def frequenty_ask_question(request):
     all_faqs = FreqenltyAskQuestion.objects.all()
     context = {'all_faqs':all_faqs}
     return render(request, 'app/faqs.html', context)
+
+
+class RateProductView(View):
+    def post(self, request, product__id, *args, **kwargs):
+        product = Product.objects.get(id=product__id)
+        rating = request.POST['rating']
+        Rating.objects.create(product=product, user=request.user, rating=rating)
+        product.update_rating()
+        return redirect('product-detail', product_id=product_id)
+
+
+
+@login_required(login_url='login')
+def rate_product(request, pk):
+    if request.method == "POST":
+        product = Product.objects.get(pk=pk)
+        user = request.user
+        rating = request.POST.get('rating')
+        if Rating.objects.filter(product=product, user=user).exists():
+            messages.warning(request, "You have already rated this product.")
+        else:
+            Rating.objects.create(product=product, user=user, rating=rating)
+            product.update_rating()
+            messages.success(request, "Thank you for rating this product.")
+        return redirect('product-detail', pk=pk)
+    product = Product.objects.get(pk=pk)
+    return render(request, "app/rate_product.html", {'product':product})
+
