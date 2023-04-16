@@ -2,3 +2,4 @@ db.sqlite3
 pycache
 migrations
 db.sqlite3
+.env

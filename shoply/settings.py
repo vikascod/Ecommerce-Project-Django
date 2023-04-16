@@ -22,14 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-SECRET_KEY = get_random_string(50, chars)
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str(os.environ.get('DEBUG'))=="1"
 
-ALLOWED_HOSTS = ["64.227.144.122", "*"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+if not DEBUG:
+    ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
 
 SITE_ID = 1
 
@@ -105,16 +107,33 @@ if DEBUG:
         }
     }
 else: 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'ecommerce1',
-            'USER': 'vikk',
-            'PASSWORD': 'Mohangarden',
-            'HOST': 'localhost',
-            'PORT': '',
+    POSTGRES_DB = os.environ.get("POSTGRES_DB")
+    POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+    POSTGRES_USER = os.environ.get("POSTGRES_USER")
+    POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+    POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
+
+    POSTGRES_READY = (
+        POSTGRES_DB is not None
+        and POSTGRES_PASSWORD is not None
+        and POSTGRES_USER is not None
+        and POSTGRES_HOST is not None
+        and POSTGRES_PORT is not None
+    )
+
+    if POSTGRES_READY:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": POSTGRES_DB,
+                "USER": POSTGRES_USER,
+                "PASSWORD": POSTGRES_PASSWORD,
+                "HOST": POSTGRES_HOST,
+                "PORT": POSTGRES_PORT,
+            }
         }
-    }
+
+
 
 
 
