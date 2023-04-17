@@ -21,3 +21,4 @@ psycopg2-binary==2.9.5
 python-decouple==3.8
 gunicorn==20.1.0
 django-simple-captcha==0.5.17
+whitenoise==6.4.0
