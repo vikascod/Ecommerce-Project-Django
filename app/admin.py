@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Cart, Customer, Product, OrderPlaced, FreqenltyAskQuestion, Rating
+from app.models import Cart, Customer, Product, OrderPlaced, FreqenltyAskQuestion, Rating, Comment
 from django.utils.html import format_html
 from django.urls import reverse
 
@@ -32,3 +32,4 @@ class OrderPlacedAdmin(admin.ModelAdmin):
 
 admin.site.register(FreqenltyAskQuestion)
 admin.site.register(Rating)
+admin.site.register(Comment)
