@@ -2,6 +2,7 @@ from pathlib import Path
 import dotenv
 from django.utils.crypto import get_random_string
 import os
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,7 +14,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nl
 # DEBUG = True
 DEBUG = str(os.environ.get('DEBUG'))=="1"
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'plankton-app-2vtqr.ondigitalocean.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'seahorse-app-uge7d.ondigitalocean.app']
 
 # if not DEBUG:
 #     ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
@@ -86,15 +87,15 @@ if DEBUG:
         }
     }
 else:
-    POSTGRES_DB = "postgres"
+    POSTGRES_DB = config('POSTGRES_DB')
     print(POSTGRES_DB)
-    POSTGRES_PASSWORD = "Vikas123!@#"
+    POSTGRES_PASSWORD = config('POSTGRES_PASSWORD')
     print(POSTGRES_PASSWORD)
-    POSTGRES_USER = "postgres"
+    POSTGRES_USER = config('POSTGRES_USER')
     print(POSTGRES_USER)
-    POSTGRES_HOST = "db.xpzubiymwkvabfcirrxq.supabase.co"
+    POSTGRES_HOST = config('POSTGRES_HOST')
     print(POSTGRES_HOST)
-    POSTGRES_PORT = 5432
+    POSTGRES_PORT = config('POSTGRES_PORT')
     print(POSTGRES_PORT)
 
     POSTGRES_READY = (
