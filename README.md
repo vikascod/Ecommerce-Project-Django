@@ -18,5 +18,4 @@ Database - Postgresql
                                              
     1. Added Redis Cache for better performance 
     2. Added Rate Limiter 
-    3. Added Captcha :- Any bot can not enter in application 
-        
+    3. Added Captcha :- Any bot can not enter in application
