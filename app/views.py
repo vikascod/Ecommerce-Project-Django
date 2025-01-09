@@ -23,7 +23,6 @@ from django.contrib.auth.views import LogoutView
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
 
 
-
 class ProductAddView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_staff:
@@ -108,33 +107,23 @@ class ProductView(View):
         if bottomwears is None:
             bottomwears = Product.objects.filter(category='BW')
             cache.set('all_bottomwears', bottomwears, CACHE_TTL)
-            print(print("Hit bottomwears db"))
-        else:
-            print("Hit bottomwears cache")
 
         topwears = cache.get('all_topwears')
         if topwears is None:
             topwears = Product.objects.filter(category='TW')
             cache.set('all_topwears', topwears, CACHE_TTL)
-            print("Hit topwears db")
-        else:
-            print("Hit topwears cache")
+
 
         mobiles = cache.get('all_mobiles')
         if mobiles is None:
             mobiles = Product.objects.filter(category='M')
             cache.set('all_mobiles', mobiles, CACHE_TTL)
-            print("Hit mobiles db")
-        else:
-            print("Hit mobiles cache")
+
 
         laptops = cache.get('all_laptops')
         if laptops is None:
             laptops = Product.objects.filter(category='L')
             cache.set('all_laptops', laptops, CACHE_TTL)
-            print("Hit laptops db") 
-        else:
-            print("Hit laptops cache")
 
         if request.user.is_authenticated:
             total_item = Cart.objects.filter(user=request.user).count()
@@ -148,7 +137,6 @@ class ProductView(View):
         }
 
         return render(request, 'app/home.html', context)
-
 
 
 class ProductDetailView(View):

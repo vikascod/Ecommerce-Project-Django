@@ -81,7 +81,8 @@
             <li class="nav-item mx-2">
                 <a href="{% url 'comment' %}" class="nav-link text-white">Comments</a>
             </li>
-            {% else %}
+            {% endif %}
+            {% if not request.user.is_authenticated %}
             <li class="nav-item mx-2">
                 <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
             </li>

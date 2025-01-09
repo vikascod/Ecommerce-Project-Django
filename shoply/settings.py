@@ -18,7 +18,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nl
 # DEBUG = str(os.environ.get('DEBUG'))=="1"
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'seahorse-app-uge7d.ondigitalocean.app']
+from decouple import config
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
+
 
 # if not DEBUG:
 #     ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
@@ -110,14 +113,15 @@ else:
 
 CACHE_TTL = 60
 
+
 CACHES = {
-    "default":{
-        "BACKEND":"django_redis.cache.RedisCache",
-        "LOCATION":"redis://127.0.0.1:6379",
-        "OPTIONAL":{
-            "CLIENT_CLASS":"django_redis.cache.DefaultClient"
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
-        "KEY_PREFIX":"exaple"
+        "KEY_PREFIX": "example",
     }
 }
 

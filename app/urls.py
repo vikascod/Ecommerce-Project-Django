@@ -1,9 +1,11 @@
 from django.urls import path
 from app import views
+from app.utils import not_authenticated
 from app.views import *
 from django.contrib.auth import views as auth_view
 from app.forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPasswordForm
 from django_ratelimit.decorators import ratelimit
+from django.contrib.auth.decorators import user_passes_test
 
 
 urlpatterns = [
@@ -45,8 +47,19 @@ urlpatterns = [
 
 
     #set rate rate limiter
-    path('accounts/login/', ratelimit(key='post:username', rate='5/m')(auth_view.LoginView.as_view(template_name='app/login.html', success_url='home', authentication_form=LoginForm)), name='login'),
-
+    path(
+        'accounts/login/',
+        user_passes_test(not_authenticated, login_url='home')(
+            ratelimit(key='post:username', rate='5/m')(
+                auth_view.LoginView.as_view(
+                    template_name='app/login.html',
+                    success_url='home',
+                    authentication_form=LoginForm,
+                )
+            )
+        ),
+        name='login',
+    ),
     path('logout/', (LogoutView.as_view()), name='logout'),
 
     path('passwordchange/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeView.as_view(template_name='app/passwordchange.html', form_class=MyPasswordChangeForm, success_url='/passwordchangedone/')), name='passwordchange'),
