@@ -460,10 +460,9 @@ def frequenty_ask_question(request):
     context = {'all_faqs':all_faqs}
     return render(request, 'app/faqs.html', context)
 
-
 class RateProductView(View):
-    def post(self, request, product__id, *args, **kwargs):
-        product = Product.objects.get(id=product__id)
+    def post(self, request, product_id, *args, **kwargs):
+        product = Product.objects.get(id=product_id)
         rating = request.POST['rating']
         Rating.objects.create(product=product, user=request.user, rating=rating)
         product.update_rating()
