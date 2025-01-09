@@ -17,6 +17,7 @@ from django_ratelimit.decorators import ratelimit
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.db.models import Avg
+from django.contrib.auth.views import LogoutView
 
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
@@ -498,3 +499,6 @@ def rate_product(request, pk):
     product = Product.objects.get(pk=pk)
     return render(request, "app/rate_product.html", {'product':product})
 
+
+class LogoutView(LogoutView):
+    next_page = 'login'

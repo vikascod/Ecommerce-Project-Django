@@ -1,8 +1,11 @@
 from pathlib import Path
+from urllib.parse import urlparse
 import dotenv
 from django.utils.crypto import get_random_string
 import os
 from decouple import config
+from dotenv import load_dotenv
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,7 +15,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nl
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = str(os.environ.get('DEBUG'))=="1"
+# DEBUG = str(os.environ.get('DEBUG'))=="1"
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'seahorse-app-uge7d.ondigitalocean.app']
 
@@ -81,6 +85,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'shoply.wsgi.application'
 
 
+# Replace the DATABASES section of your settings.py with this
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 if DEBUG:
     DATABASES = {
         'default': {
@@ -89,38 +96,16 @@ if DEBUG:
         }
     }
 else:
-    POSTGRES_DB = config('POSTGRES_DB')
-    print(POSTGRES_DB)
-    POSTGRES_PASSWORD = config('POSTGRES_PASSWORD')
-    print(POSTGRES_PASSWORD)
-    POSTGRES_USER = config('POSTGRES_USER')
-    print(POSTGRES_USER)
-    POSTGRES_HOST = config('POSTGRES_HOST')
-    print(POSTGRES_HOST)
-    POSTGRES_PORT = config('POSTGRES_PORT')
-    print(POSTGRES_PORT)
-
-    POSTGRES_READY = (
-        POSTGRES_DB is not None
-        and POSTGRES_PASSWORD is not None
-        and POSTGRES_USER is not None
-        and POSTGRES_HOST is not None
-        and POSTGRES_PORT is not None
-    )
-
-    if POSTGRES_READY:
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.postgresql",
-                "NAME": POSTGRES_DB,
-                "USER": POSTGRES_USER,
-                "PASSWORD": POSTGRES_PASSWORD,
-                "HOST": POSTGRES_HOST,
-                "PORT": POSTGRES_PORT,
-            }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': tmpPostgres.path.replace('/', ''),
+            'USER': tmpPostgres.username,
+            'PASSWORD': tmpPostgres.password,
+            'HOST': tmpPostgres.hostname,
+            'PORT': 5432,
         }
-
-
+    }
 
 
 CACHE_TTL = 60
@@ -128,7 +113,7 @@ CACHE_TTL = 60
 CACHES = {
     "default":{
         "BACKEND":"django_redis.cache.RedisCache",
-        "LOCATION":"redis://default:UyKbsk3noBII95dpSILZ4GKhhh5kwD4k@redis-11988.c84.us-east-1-2.ec2.cloud.redislabs.com:11988",
+        "LOCATION":"redis://127.0.0.1:6379",
         "OPTIONAL":{
             "CLIENT_CLASS":"django_redis.cache.DefaultClient"
         },
@@ -197,9 +182,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 if DEBUG:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR / 'static')]
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 else:
-    STATIC_ROOT = os.path.join(BASE_DIR / 'static')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # STORAGES = {
 #     "staticfiles": {

@@ -47,7 +47,7 @@ urlpatterns = [
     #set rate rate limiter
     path('accounts/login/', ratelimit(key='post:username', rate='5/m')(auth_view.LoginView.as_view(template_name='app/login.html', success_url='home', authentication_form=LoginForm)), name='login'),
 
-    path('logout/', ratelimit(key='get:username', rate='5/m')(auth_view.LogoutView.as_view(next_page='login')), name='logout'),
+    path('logout/', (LogoutView.as_view()), name='logout'),
 
     path('passwordchange/', ratelimit(key='post:username', rate='5/m')(auth_view.PasswordChangeView.as_view(template_name='app/passwordchange.html', form_class=MyPasswordChangeForm, success_url='/passwordchangedone/')), name='passwordchange'),
 
