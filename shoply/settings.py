@@ -16,12 +16,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nl
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 # DEBUG = str(os.environ.get('DEBUG'))=="1"
-DEBUG = True
+DEBUG = False
 
 from decouple import config
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
-
 
 # if not DEBUG:
 #     ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
@@ -185,10 +184,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-if DEBUG:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # STORAGES = {
 #     "staticfiles": {
@@ -210,3 +207,22 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'django_error.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
