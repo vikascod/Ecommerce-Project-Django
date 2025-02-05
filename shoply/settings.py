@@ -4,20 +4,21 @@ import dotenv
 from django.utils.crypto import get_random_string
 import os
 from dotenv import load_dotenv
+import environ
 
-load_dotenv()
+env = environ.Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECRET_KEY = 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3'
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = str(os.getenv('DEBUG'))
+DEBUG = env.bool("DEBUG")
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 SITE_ID = 1
 
