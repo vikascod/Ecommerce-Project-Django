@@ -18,7 +18,7 @@ SECRET_KEY = "7oxt)if8l&ld7b&f=s@*uufrh^y5744e@j4v*+5(ki-%t7&f&"
 
 DEBUG = False
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = ["*"]
 
 SITE_ID = 1
 
