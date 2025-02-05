@@ -20,7 +20,6 @@ DEBUG = str(os.environ.get('DEBUG'))
 from decouple import config
 
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
-print("====", ALLOWED_HOSTS)
 
 SITE_ID = 1
 
