@@ -14,16 +14,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-# DEBUG = str(os.environ.get('DEBUG'))=="1"
-DEBUG = False
+
+DEBUG = str(os.environ.get('DEBUG'))
 
 from decouple import config
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
-
-# if not DEBUG:
-#     ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+print("====", ALLOWED_HOSTS)
 
 SITE_ID = 1
 
@@ -90,24 +87,24 @@ WSGI_APPLICATION = 'shoply.wsgi.application'
 # Replace the DATABASES section of your settings.py with this
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# if DEBUG:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': tmpPostgres.path.replace('/', ''),
-            'USER': tmpPostgres.username,
-            'PASSWORD': tmpPostgres.password,
-            'HOST': tmpPostgres.hostname,
-            'PORT': 5432,
-        }
-    }
+}
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': tmpPostgres.path.replace('/', ''),
+#             'USER': tmpPostgres.username,
+#             'PASSWORD': tmpPostgres.password,
+#             'HOST': tmpPostgres.hostname,
+#             'PORT': 5432,
+#         }
+#     }
 
 
 CACHE_TTL = 60
