@@ -75,12 +75,6 @@
                     </form>
                 </ul>
             </li>
-            <li class="nav-item mx-2">
-                <a href="{% url 'cart' %}" class="nav-link text-white"><span class="badge bg-danger">{{total_item}}</span> Cart </a>
-            </li>
-            <li class="nav-item mx-2">
-                <a href="{% url 'comment' %}" class="nav-link text-white">Comments</a>
-            </li>
             {% endif %}
             {% if not request.user.is_authenticated %}
             <li class="nav-item mx-2">
@@ -89,6 +83,13 @@
             <li class="nav-item mx-2">
                 <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a>
             </li>
+            {% else %}
+            <li class="nav-item mx-2">
+              <a href="{% url 'cart' %}" class="nav-link text-white"><span class="badge bg-danger">{{total_item}}</span> Cart </a>
+            </li>
+            <!-- <li class="nav-item mx-2">
+                <a href="{% url 'comment' %}" class="nav-link text-white">Comments</a>
+            </li> -->
             {% endif %}
             <li class="nav-item mx-2">
               <a href="{% url 'about' %}" class="nav-link text-white">About Us</a>

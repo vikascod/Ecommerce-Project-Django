@@ -3,23 +3,21 @@ from urllib.parse import urlparse
 import dotenv
 from django.utils.crypto import get_random_string
 import os
-from decouple import config
 from dotenv import load_dotenv
 
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECRET_KEY = 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3'
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = str(os.environ.get('DEBUG'))
+DEBUG = str(os.getenv('DEBUG'))
 
-from decouple import config
-
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
 SITE_ID = 1
 
