@@ -107,13 +107,13 @@ DATABASES = {
 
 CACHE_TTL = 60
 
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:SFisFqz0X1cXdAFUol6SK1hAhmJlMc8O@redis-19264.c15.us-east-1-4.ec2.redns.redis-cloud.com:19264/0",
+        "LOCATION": "redis://default:SFisFqz0X1cXdAFUol6SK1hAhmJlMc8O@redis-19264.c15.us-east-1-4.ec2.redns.redis-cloud.com:19264/0",
         "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": "SFisFqz0X1cXdAFUol6SK1hAhmJlMc8O",
         },
         "KEY_PREFIX": "example",
     }
