@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECRET_KEY = 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3'
-SECRET_KEY = "7oxt)if8l&ld7b&f=s@*uufrh^y%5744e@j4v*+5(ki-%t7&f&"
+SECRET_KEY = "7oxt)if8l&ld7b&f=s@*uufrh^y5744e@j4v*+5(ki-%t7&f&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
