@@ -5,6 +5,7 @@ from django.utils.crypto import get_random_string
 import os
 from dotenv import load_dotenv
 import environ
+load_dotenv()
 
 env = environ.Env()
 
@@ -12,13 +13,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECRET_KEY = 'mo0+91hv5^(kcgl#@02!)_v@pga_nlnj!-96&@a7-no)08g3'
-SECRET_KEY = "7oxt)if8l&ld7b&f=s@*uufrh^y5744e@j4v*+5(ki-%t7&f&"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS")
 
 SITE_ID = 1
 
@@ -110,10 +111,9 @@ CACHE_TTL = 60
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:SFisFqz0X1cXdAFUol6SK1hAhmJlMc8O@redis-19264.c15.us-east-1-4.ec2.redns.redis-cloud.com:19264/0",
+        "LOCATION": os.getenv("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "SFisFqz0X1cXdAFUol6SK1hAhmJlMc8O",
         },
         "KEY_PREFIX": "example",
     }
@@ -203,21 +203,21 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': 'django_error.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': 'django_error.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#     },
+# }
